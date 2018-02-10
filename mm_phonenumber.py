@@ -22,35 +22,36 @@
 import re
 
 
-class MMPhoneNumber():
-    def __init__(self):
-        self.OOREDOO = "Ooredoo"
-        self.TELENOR = "Telenor"
-        self.MPT = "MPT"
-        self.UNKNOWN = "Unknown"
+class MMPhoneNumber:
 
-        self.GSM_TYPE = "GSM"
-        self.WCDMA_TYPE = "WCDMA"
-        self.CDMA_450_TYPE = "CDMA 450 MHz"
-        self.CDMA_800_TYPE = "CDMA 800 MHz"
+    OOREDOO = "Ooredoo"
+    TELENOR = "Telenor"
+    MPT = "MPT"
+    UNKNOWN = "Unknown"
 
-        self.ooredoo_re = r"^(0?9|\+?959)9(7|6)\d{7}$"
-        self.telenor_re = r"^(0?9|\+?959)7(9|8|7)\d{7}$"
-        self.mpt_re = r"^(0?9|\+?959)(5\d{6}|4\d{7,8}|2\d{6,8}|3\d{7,8}|6\d{6}|8\d{6}|7\d{7}|9(0|1|9)\d{5,6})$"
+    GSM_TYPE = "GSM"
+    WCDMA_TYPE = "WCDMA"
+    CDMA_450_TYPE = "CDMA 450 MHz"
+    CDMA_800_TYPE = "CDMA 800 MHz"
 
-    def is_valid_mm_phonenumber(self, phonenumber=None):
+    ooredoo_re = r"^(0?9|\+?959)9(7|6)\d{7}$"
+    telenor_re = r"^(0?9|\+?959)7(9|8|7)\d{7}$"
+    mpt_re = r"^(0?9|\+?959)(5\d{6}|4\d{7,8}|2\d{6,8}|3\d{7,8}|6\d{6}|8\d{6}|7\d{7}|9(0|1|9)\d{5,6})$"
+
+    @classmethod
+    def is_valid_mm_phonenumber(cls, phonenumber=None):
         phonenumber = str(phonenumber)
         if phonenumber:
-            phonenumber = self.sanitize_phonenumber(phonenumber=phonenumber)
-
+            phonenumber = cls.sanitize_phonenumber(phonenumber=phonenumber)
             mm_phone_re = r"^(0?9|\+?950?9|\+?95950?9)\d{7,9}$"
 
-            if self.__check_regex([mm_phone_re], phonenumber):
+            if cls.__check_regex([mm_phone_re], phonenumber):
                 return True
 
         return False
 
-    def sanitize_phonenumber(self, phonenumber=None):
+    @classmethod
+    def sanitize_phonenumber(cls, phonenumber=None):
         phonenumber = str(phonenumber)
         if phonenumber:
             phonenumber = phonenumber.strip()
@@ -59,73 +60,76 @@ class MMPhoneNumber():
 
             country_code_re = r"^\+?950?9\d+$"
 
-            if self.__check_regex([country_code_re], phonenumber):
+            if cls.__check_regex([country_code_re], phonenumber):
                 # try to remove double country code
                 double_country_code_re = r"^\+?95950?9\d{7,9}$"
 
-                if self.__check_regex([double_country_code_re], phonenumber):
+                if cls.__check_regex([double_country_code_re], phonenumber):
                     # remove double country code
                     phonenumber = phonenumber.replace("9595", "95", 1)
 
                 # remove 0 before area code
                 zero_before_areacode_re = r"^\+?9509\d{7,9}$"
 
-                if self.__check_regex([zero_before_areacode_re], phonenumber):
+                if cls.__check_regex([zero_before_areacode_re], phonenumber):
                     # remove double country code
                     phonenumber = phonenumber.replace("9509", "959", 1)
 
         return phonenumber
 
-    def get_telecom_name(self, phonenumber=None):
+    @classmethod
+    def get_telecom_name(cls, phonenumber=None):
         phonenumber = str(phonenumber)
-        telecom_name = self.UNKNOWN
+        telecom_name = cls.UNKNOWN
 
-        if phonenumber and self.is_valid_mm_phonenumber(
+        if phonenumber and cls.is_valid_mm_phonenumber(
             phonenumber=phonenumber
         ):
             # sanitize the phonenumber first
-            phonenumber = self.sanitize_phonenumber(phonenumber=phonenumber)
+            phonenumber = cls.sanitize_phonenumber(phonenumber=phonenumber)
 
-            if self.__check_regex([self.ooredoo_re], phonenumber):
-                telecom_name = self.OOREDOO
-            elif self.__check_regex([self.telenor_re], phonenumber):
-                telecom_name = self.TELENOR
-            elif self.__check_regex([self.mpt_re], phonenumber):
-                telecom_name = self.MPT
+            if cls.__check_regex([cls.ooredoo_re], phonenumber):
+                telecom_name = cls.OOREDOO
+            elif cls.__check_regex([cls.telenor_re], phonenumber):
+                telecom_name = cls.TELENOR
+            elif cls.__check_regex([cls.mpt_re], phonenumber):
+                telecom_name = cls.MPT
 
         return telecom_name
 
-    def get_phone_network_type(self, phonenumber=None):
+    @classmethod
+    def get_phone_network_type(cls, phonenumber=None):
         phonenumber = str(phonenumber)
-        network_type = self.UNKNOWN
+        network_type = cls.UNKNOWN
 
-        if phonenumber and self.is_valid_mm_phonenumber(
+        if phonenumber and cls.is_valid_mm_phonenumber(
             phonenumber=phonenumber
         ):
             # sanitize the phonenumber first
-            phonenumber = self.sanitize_phonenumber(phonenumber=phonenumber)
+            phonenumber = cls.sanitize_phonenumber(phonenumber=phonenumber)
 
-            if self.__check_regex(
-                [self.ooredoo_re, self.telenor_re], phonenumber
+            if cls.__check_regex(
+                [cls.ooredoo_re, cls.telenor_re], phonenumber
             ):
-                network_type = self.GSM_TYPE
-            elif self.__check_regex([self.mpt_re], phonenumber):
+                network_type = cls.GSM_TYPE
+            elif cls.__check_regex([cls.mpt_re], phonenumber):
                 wcdma_re = r"^(09|\+?959)(55\d{5}|25[2-4]\d{6}|26\d{7}|4(4|5|6)\d{7})$"
                 cdma_450_re = r"^(09|\+?959)(8\d{6}|6\d{6}|49\d{6})$"
                 cdma_800_re = r"^(09|\+?959)(3\d{7}|73\d{6}|91\d{6})$"
 
-                if self.__check_regex([wcdma_re], phonenumber):
-                    network_type = self.WCDMA_TYPE
-                elif self.__check_regex([cdma_450_re], phonenumber):
-                    network_type = self.CDMA_450_TYPE
-                elif self.__check_regex([cdma_800_re], phonenumber):
-                    network_type = self.CDMA_800_TYPE
+                if cls.__check_regex([wcdma_re], phonenumber):
+                    network_type = cls.WCDMA_TYPE
+                elif cls.__check_regex([cdma_450_re], phonenumber):
+                    network_type = cls.CDMA_450_TYPE
+                elif cls.__check_regex([cdma_800_re], phonenumber):
+                    network_type = cls.CDMA_800_TYPE
                 else:
-                    network_type = self.GSM_TYPE
+                    network_type = cls.GSM_TYPE
 
         return network_type
 
-    def __check_regex(self, regex_array, input_string):
+    @classmethod
+    def __check_regex(cls, regex_array, input_string):
         for regex in regex_array:
             if re.search(regex, input_string):
                 return True
