@@ -41,6 +41,7 @@ class MMPhoneNumber():
 
 
 	def is_valid_mm_phonenumber(self, phonenumber=None):
+		phonenumber = str(phonenumber)
 		if phonenumber:
 			phonenumber = self.sanitize_phonenumber(phonenumber=phonenumber)
 
@@ -53,6 +54,7 @@ class MMPhoneNumber():
 
 
 	def sanitize_phonenumber(self, phonenumber=None):
+		phonenumber = str(phonenumber)
 		if phonenumber:
 			phonenumber = phonenumber.strip()
 			phonenumber = phonenumber.replace(" ", "")
@@ -79,6 +81,7 @@ class MMPhoneNumber():
 
 
 	def get_telecom_name(self, phonenumber=None):
+		phonenumber = str(phonenumber)
 		telecom_name = self.UNKNOWN
 
 		if phonenumber and self.is_valid_mm_phonenumber(phonenumber=phonenumber):
@@ -97,6 +100,7 @@ class MMPhoneNumber():
 
 
 	def get_phone_network_type(self, phonenumber=None):
+		phonenumber = str(phonenumber)
 		network_type = self.UNKNOWN
 
 		if phonenumber and self.is_valid_mm_phonenumber(phonenumber=phonenumber):
