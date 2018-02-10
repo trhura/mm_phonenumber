@@ -35,9 +35,9 @@ class MMPhoneNumber():
 		self.CDMA_450_TYPE = "CDMA 450 MHz"
 		self.CDMA_800_TYPE = "CDMA 800 MHz"
 
-		self.ooredoo_re = r"^(09|\+?959)9(7|6)\d{7}$"
-		self.telenor_re = r"^(09|\+?959)7(9|8|7)\d{7}$"
-		self.mpt_re = r"^(09|\+?959)(5\d{6}|4\d{7,8}|2\d{6,8}|3\d{7,8}|6\d{6}|8\d{6}|7\d{7}|9(0|1|9)\d{5,6})$"
+		self.ooredoo_re = r"^(0?9|\+?959)9(7|6)\d{7}$"
+		self.telenor_re = r"^(0?9|\+?959)7(9|8|7)\d{7}$"
+		self.mpt_re = r"^(0?9|\+?959)(5\d{6}|4\d{7,8}|2\d{6,8}|3\d{7,8}|6\d{6}|8\d{6}|7\d{7}|9(0|1|9)\d{5,6})$"
 
 
 	def is_valid_mm_phonenumber(self, phonenumber=None):
