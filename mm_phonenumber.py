@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 # Copyright 2016 Melomap (www.melomap.com)
+# Copyright 2018 Thura Hlaing (trhura@gmail.com)
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
 # not use this file except in compliance with the License. You may obtain
@@ -14,113 +15,38 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-#
-# Thanks http://www.itu.int/dms_pub/itu-t/oth/02/02/T02020000920004PDFE.pdf
-# https://www.numberingplans.com/?page=plans&sub=phonenr&alpha_2_input=MM&current_page=74
-#
-
 import re
 
-OOREDOO = "Ooredoo"
-TELENOR = "Telenor"
-MPT = "MPT"
-UNKNOWN = "Unknown"
+mobile_code_re = r"(?P<mobile_code>0?9)"
+country_code_re = r"(?P<country_code>\+?95)"
 
-GSM_TYPE = "GSM"
-WCDMA_TYPE = "WCDMA"
-CDMA_450_TYPE = "CDMA 450 MHz"
-CDMA_800_TYPE = "CDMA 800 MHz"
+ooredoo_re = r"(?P<oordeoo>9(7|6)\d{7}$)"
+telenor_re = r"(?P<telenor>7(9|8|7|6)\d{7})$"
+mpt_re = r"(?P<mpt>5\d{6}|4\d{7,8}|2\d{6,8}|3\d{7,8}|6\d{6}|8\d{6}|7\d{7}|9(0|1|9)\d{5,6})$"
 
-mm_phone_re = r"^(0?9|\+?950?9|\+?95950?9)\d{7,9}$"
+all_operators_re = r"(?P<anyoperator>{0}|{1}|{2})".format(
+    ooredoo_re, telenor_re, mpt_re
+)
 
-ooredoo_re = r"^(0?9|\+?959)9(7|6)\d{7}$"
-telenor_re = r"^(0?9|\+?959)7(9|8|7)\d{7}$"
-mpt_re = r"^(0?9|\+?959)(5\d{6}|4\d{7,8}|2\d{6,8}|3\d{7,8}|6\d{6}|8\d{6}|7\d{7}|9(0|1|9)\d{5,6})$"
-
-country_code_re = r"^\+?950?9\d+$"
-double_country_code_re = r"^\+?95950?9\d{7,9}$"
-zero_before_areacode_re = r"^\+?9509\d{7,9}$"
+mm_phone_re = re.compile(
+    r"^({0}?{1})?{2}$".format(
+        country_code_re, mobile_code_re, all_operators_re
+    )
+)
 
 
-def is_valid_mm_phonenumber(phonenumber=None):
-    phonenumber = str(phonenumber)
-    if phonenumber:
-        phonenumber = sanitize_phonenumber(phonenumber=phonenumber)
-        if _check_regex([mm_phone_re], phonenumber):
-            return True
-
-    return False
+def is_valid_mm_phonenumber(phonenumber):
+    return mm_phone_re.match(phonenumber) is not None
 
 
-def sanitize_phonenumber(phonenumber=None):
-    phonenumber = str(phonenumber)
-    if phonenumber:
-        phonenumber = phonenumber.strip()
-        phonenumber = phonenumber.replace(" ", "")
-        phonenumber = phonenumber.replace("-", "")
+def normalize_mm_phonenumber(phonenumber):
+    match = mm_phone_re.match(phonenumber)
 
-        if _check_regex([country_code_re], phonenumber):
-            # try to remove double country code
-            if _check_regex([double_country_code_re], phonenumber):
-                # remove double country code
-                phonenumber = phonenumber.replace("9595", "95", 1)
+    if not match:
+        raise RuntimeError(
+            "%s is not a valid Myanmar phonenumber." % phonenumber
+        )
 
-            # remove 0 before area code
-            if _check_regex([zero_before_areacode_re], phonenumber):
-                # remove double country code
-                phonenumber = phonenumber.replace("9509", "959", 1)
-
-    return phonenumber
-
-
-def get_telecom_name(phonenumber=None):
-    phonenumber = str(phonenumber)
-    telecom_name = UNKNOWN
-
-    if phonenumber and is_valid_mm_phonenumber(phonenumber=phonenumber):
-        # sanitize the phonenumber first
-        phonenumber = sanitize_phonenumber(phonenumber=phonenumber)
-
-        if _check_regex([ooredoo_re], phonenumber):
-            telecom_name = OOREDOO
-        elif _check_regex([telenor_re], phonenumber):
-            telecom_name = TELENOR
-        elif _check_regex([mpt_re], phonenumber):
-            telecom_name = MPT
-
-    return telecom_name
-
-
-def get_phone_network_type(phonenumber=None):
-    phonenumber = str(phonenumber)
-    network_type = UNKNOWN
-
-    if phonenumber and is_valid_mm_phonenumber(phonenumber=phonenumber):
-        # sanitize the phonenumber first
-        phonenumber = sanitize_phonenumber(phonenumber=phonenumber)
-
-        if _check_regex([ooredoo_re, telenor_re], phonenumber):
-            network_type = GSM_TYPE
-        elif _check_regex([mpt_re], phonenumber):
-            wcdma_re = r"^(09|\+?959)(55\d{5}|25[2-4]\d{6}|26\d{7}|4(4|5|6)\d{7})$"
-            cdma_450_re = r"^(09|\+?959)(8\d{6}|6\d{6}|49\d{6})$"
-            cdma_800_re = r"^(09|\+?959)(3\d{7}|73\d{6}|91\d{6})$"
-
-            if _check_regex([wcdma_re], phonenumber):
-                network_type = WCDMA_TYPE
-            elif _check_regex([cdma_450_re], phonenumber):
-                network_type = CDMA_450_TYPE
-            elif _check_regex([cdma_800_re], phonenumber):
-                network_type = CDMA_800_TYPE
-            else:
-                network_type = GSM_TYPE
-
-    return network_type
-
-
-def _check_regex(regex_array, input_string):
-    for regex in regex_array:
-        if re.search(regex, input_string):
-            return True
-
-    return False
+    phonenumber = match.group('anyoperator')
+    phonenumber = '959' + phonenumber
+    return int(phonenumber)
