@@ -36,12 +36,11 @@ mm_phone_re = re.compile(
 
 
 def is_valid_mm_phonenumber(phonenumber):
-    return mm_phone_re.match(phonenumber) is not None
+    return mm_phone_re.match(str(phonenumber)) is not None
 
 
 def normalize_mm_phonenumber(phonenumber):
-    match = mm_phone_re.match(phonenumber)
-
+    match = mm_phone_re.match(str(phonenumber))
     if not match:
         raise RuntimeError(
             "%s is not a valid Myanmar phonenumber." % phonenumber
