@@ -28,6 +28,7 @@ def test_ooredoo():
 
 def test_mpt():
     assert re.match(mp.mpt_re, "420090065") is not None
+
     assert re.match(mp.mpt_re, "5093449") is not None
     assert re.match(mp.mpt_re, "763619515") is None
 
@@ -42,6 +43,7 @@ def test_all_operators_re():
 
 def test_mm_phone_re():
     assert re.match(mp.mm_phone_re, "+959420090065") is not None
+    assert re.match(mp.mm_phone_re, "09420090065") is not None
     assert re.match(mp.mm_phone_re, "095093449") is not None
     assert re.match(mp.mm_phone_re, "9962038186") is not None
     assert re.match(mp.mm_phone_re, "959791000481") is not None
