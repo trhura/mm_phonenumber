@@ -20,19 +20,15 @@ import re
 mobile_code_re = r"(?P<mobile_code>0?9)"
 country_code_re = r"(?P<country_code>\+?95)"
 
-ooredoo_re = r"(?P<oordeoo>9(7|6)\d{7}$)"
+ooredoo_re = r"(?P<oordeoo>9(7|6|5)\d{7}$)"
 telenor_re = r"(?P<telenor>7(9|8|7|6)\d{7})$"
 mpt_re = r"(?P<mpt>5\d{6}|4\d{7,8}|2\d{6,8}|3\d{7,8}|6\d{6}|8\d{6}|7\d{7}|9(0|1|9)\d{5,6})$"
 
 all_operators_re = r"(?P<anyoperator>{0}|{1}|{2})".format(
-    ooredoo_re, telenor_re, mpt_re
-)
+    ooredoo_re, telenor_re, mpt_re)
 
-mm_phone_re = re.compile(
-    r"^({0}?{1})?{2}$".format(
-        country_code_re, mobile_code_re, all_operators_re
-    )
-)
+mm_phone_re = re.compile(r"^({0}?{1})?{2}$".format(
+    country_code_re, mobile_code_re, all_operators_re))
 
 
 def is_valid_mm_phonenumber(phonenumber):
@@ -45,8 +41,7 @@ def normalize_mm_phonenumber(phonenumber):
     match = mm_phone_re.match(phonenumber)
     if not match:
         raise RuntimeError(
-            "%s is not a valid Myanmar phonenumber." % phonenumber
-        )
+            "%s is not a valid Myanmar phonenumber." % phonenumber)
 
     phonenumber = match.group('anyoperator')
     phonenumber = '959' + phonenumber
