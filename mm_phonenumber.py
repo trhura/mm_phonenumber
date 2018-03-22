@@ -16,6 +16,7 @@
 # under the License.
 
 import re
+import functools
 
 mobile_code_re = r"(?P<mobile_code>0?9)"
 country_code_re = r"(?P<country_code>\+?95)"
@@ -35,11 +36,13 @@ mm_phone_re = re.compile(
 )
 
 
+@functools.lru_cache(maxsize=256)
 def is_valid_mm_phonenumber(phonenumber):
     phonenumber = str(phonenumber).strip()
     return mm_phone_re.match(phonenumber) is not None
 
 
+@functools.lru_cache(maxsize=256)
 def normalize_mm_phonenumber(phonenumber):
     phonenumber = str(phonenumber).strip()
     match = mm_phone_re.match(phonenumber)
