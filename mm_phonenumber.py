@@ -21,7 +21,7 @@ import functools
 mobile_code_re = r"(?P<mobile_code>0?9)"
 country_code_re = r"(?P<country_code>\+?95)"
 
-ooredoo_re = r"(?P<oordeoo>9(7|6)\d{7}$)"
+ooredoo_re = r"(?P<oordeoo>9(7|6|5)\d{7}$)"
 telenor_re = r"(?P<telenor>7(9|8|7|6)\d{7})$"
 mpt_re = r"(?P<mpt>5\d{6}|4\d{7,8}|2\d{6,8}|3\d{7,8}|6\d{6}|8\d{6}|7\d{7}|9(0|1|9)\d{5,6})$"
 
